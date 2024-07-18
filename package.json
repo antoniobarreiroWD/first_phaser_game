@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "phaser": "^3.80.1"
+  },
+  "name": "first_phaser_game",
+  "version": "1.0.0",
+  "main": "game.js",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "scripts": {
+    "start": "http-server ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
