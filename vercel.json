@@ -16,8 +16,12 @@
             "dest": "/favicon.ico"
         },
         {
-            "src": "/main.js",
-            "dest": "src/main.js"
+            "src": "/src/(.*)",
+            "dest": "/src/$1"
+        },
+        {
+            "src": "/node_modules/(.*)",
+            "dest": "/node_modules/$1"
         }
     ]
 }
