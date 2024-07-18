@@ -7,7 +7,11 @@
         },
         {
             "src": "src/main.js",
-            "use": "@vercel/node"
+            "use": "@vercel/static"
+        },
+        {
+            "src": "assets/**",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
@@ -18,6 +22,10 @@
         {
             "src": "/src/(.*)",
             "dest": "/src/$1"
+        },
+        {
+            "src": "/assets/(.*)",
+            "dest": "/assets/$1"
         }
     ]
 }

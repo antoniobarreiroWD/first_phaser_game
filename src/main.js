@@ -23,7 +23,6 @@ function preload() {
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground1', 'assets/ground1.png');
     this.load.spritesheet('player', 'assets/dude4.png', { frameWidth: 128, frameHeight: 128 });
-
     this.load.image('zombieWalk1', 'assets/Walk1.png');
     this.load.image('zombieWalk2', 'assets/Walk2.png');
     this.load.image('zombieWalk3', 'assets/Walk3.png');
@@ -34,22 +33,18 @@ function preload() {
 
 function create() {
     this.background = this.add.tileSprite(0, 0, 4800, 600, 'sky').setOrigin(0, 0);
-
     this.platforms = this.physics.add.staticGroup();
-
     let ground = this.add.tileSprite(2400, 590, 4800, 64, 'ground1');
     this.physics.add.existing(ground, true);
-
     ground.body.setSize(4800, 64);
     ground.body.setOffset(0, 0);
-
     this.platforms.add(ground);
 
     this.player = this.physics.add.sprite(100, 450, 'player');
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
-    this.player.body.setSize(60, 128, false); 
-    this.player.body.setOffset((this.player.width - 60) / 2, 0); 
+    this.player.body.setSize(60, 128, false);
+    this.player.body.setOffset((this.player.width - 60) / 2, 0);
 
     this.anims.create({
         key: 'left',
@@ -81,8 +76,8 @@ function create() {
     this.physics.world.setBounds(0, 0, 4800, 600);
 
     this.enemies = this.physics.add.group({
-        immovable: false, 
-        allowGravity: true 
+        immovable: false,
+        allowGravity: true
     });
 
     let enemyPositions = [
@@ -99,7 +94,7 @@ function create() {
         let enemy = this.enemies.create(pos.x, pos.y, 'zombieWalk1').setScale(0.4);
         enemy.setBounce(0.2);
         enemy.setCollideWorldBounds(true);
-        enemy.setVelocityX(Phaser.Math.Between(-70, 70)); 
+        enemy.setVelocityX(Phaser.Math.Between(-70, 70));
     });
 
     this.physics.add.collider(this.enemies, this.platforms);
@@ -123,16 +118,13 @@ function create() {
         enemy.anims.play('enemyWalk', true);
     });
 
-    
     const leftButton = document.getElementById('left-button');
     const rightButton = document.getElementById('right-button');
     const jumpButton = document.getElementById('jump-button');
 
-    
     let moveLeft = false;
     let moveRight = false;
 
-   
     leftButton.addEventListener('pointerdown', () => moveLeft = true);
     leftButton.addEventListener('pointerup', () => moveLeft = false);
 
@@ -145,12 +137,10 @@ function create() {
         }
     });
 
-   
     this.input.addPointer(3);
     this.moveLeft = moveLeft;
     this.moveRight = moveRight;
 
-    
     leftButton.addEventListener('pointerdown', () => this.moveLeft = true);
     leftButton.addEventListener('pointerup', () => this.moveLeft = false);
 
@@ -173,7 +163,7 @@ function update() {
     }
 
     if ((this.cursors.up.isDown || this.moveUp) && this.player.body.touching.down) {
-        this.player.setVelocityY(-400); 
+        this.player.setVelocityY(-400);
     }
 
     this.background.tilePositionX = this.cameras.main.scrollX * 0.5;
