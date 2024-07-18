@@ -14,7 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000; 
+            background-color: #000;
         }
         #game-container {
             width: 100%;
@@ -23,9 +23,90 @@
             justify-content: center;
             align-items: center;
         }
+        #rotate-device {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            z-index: 100;
+        }
+        #mobile-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .control-button {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: black;
+        }
+        @media (min-width: 768px) {
+            #mobile-controls {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="game-container"></div>
+    <div id="rotate-device">Gira el dispositivo o te comes el cilantro</div>
+    <div id="mobile-controls">
+        <button id="left-button" class="control-button">⬅️</button>
+        <button id="jump-button" class="control-button">⬆️</button>
+        <button id="right-button" class="control-button">➡️</button>
+    </div>
+    <script>
+        const rotateDeviceElement = document.getElementById('rotate-device');
+        const mobileControlsElement = document.getElementById('mobile-controls');
+
+        function checkOrientation() {
+            if (window.innerWidth < window.innerHeight) {
+                rotateDeviceElement.style.display = 'flex';
+            } else {
+                rotateDeviceElement.style.display = 'none';
+            }
+        }
+
+        function enableFullScreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { 
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { 
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { 
+                elem.msRequestFullscreen();
+            }
+        }
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('load', () => {
+            checkOrientation();
+
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                mobileControlsElement.style.display = 'flex';
+            }
+
+            enableFullScreen(); 
+        });
+    </script>
 </body>
 </html>
