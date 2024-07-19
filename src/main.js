@@ -146,6 +146,8 @@ function create() {
 
     rightButton.addEventListener('pointerdown', () => this.moveRight = true);
     rightButton.addEventListener('pointerup', () => this.moveRight = false);
+
+    adjustCameraZoom();
 }
 
 function update() {
@@ -192,8 +194,21 @@ function hitEnemy(player, enemy) {
     gameOver = true;
 }
 
-// Listener for resizing the game when the window is resized
+
+function adjustCameraZoom() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    if (width < 768) {
+        game.scene.scenes[0].cameras.main.setZoom(0.75);
+    } else {
+        game.scene.scenes[0].cameras.main.setZoom(1);
+    }
+}
+
+
 window.addEventListener('resize', () => {
     game.scale.resize(window.innerWidth, window.innerHeight);
     game.cameras.resize(window.innerWidth, window.innerHeight);
+    adjustCameraZoom();
 });
