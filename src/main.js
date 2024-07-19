@@ -191,3 +191,9 @@ function hitEnemy(player, enemy) {
     player.anims.play('turn');
     gameOver = true;
 }
+
+// Listener for resizing the game when the window is resized
+window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+    game.cameras.resize(window.innerWidth, window.innerHeight);
+});
