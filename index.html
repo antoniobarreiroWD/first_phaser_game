@@ -110,10 +110,11 @@
 
             if (/Mobi|Android/i.test(navigator.userAgent)) {
                 mobileControlsElement.style.display = 'flex';
+                enableFullScreen();
             }
-
-            enableFullScreen();
         });
+
+        document.body.addEventListener('click', enableFullScreen); 
     </script>
 </body>
 

@@ -194,7 +194,6 @@ function hitEnemy(player, enemy) {
     gameOver = true;
 }
 
-
 function adjustCameraZoom() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -205,7 +204,6 @@ function adjustCameraZoom() {
         game.scene.scenes[0].cameras.main.setZoom(1);
     }
 }
-
 
 window.addEventListener('resize', () => {
     game.scale.resize(window.innerWidth, window.innerHeight);
