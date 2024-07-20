@@ -33,7 +33,13 @@ function preload() {
     this.load.image('zombieWalk4', 'assets/Walk4.png');
     this.load.image('zombieWalk5', 'assets/Walk5.png');
     this.load.image('zombieWalk6', 'assets/Walk6.png');
-    this.load.image('croissant', 'assets/croissant.png'); 
+    this.load.image('croissant', 'assets/croissant.png');
+    this.load.image('hazard', 'assets/explosion2.png');
+    this.load.image('explosion1', 'assets/explosion3.jpg');
+    this.load.image('explosion2', 'assets/explosion2.png');
+    this.load.image('explosion3', 'assets/explosion3.png');
+    this.load.image('explosion4', 'assets/explosion4.png');
+    this.load.image('flag', 'assets/flag.png');
 }
 
 function create() {
@@ -96,6 +102,7 @@ function create() {
         enemy.setCollideWorldBounds(true);
         let velocity = Phaser.Math.Between(0, 1) === 0 ? 40 : -40;
         enemy.setVelocityX(velocity);
+        enemy.body.setSize(enemy.width * 0.7, enemy.height * 0.9);
     });
 
     this.physics.add.collider(this.enemies, this.platforms);
@@ -117,12 +124,50 @@ function create() {
 
     adjustCameraZoom();
 
-    
     for (let i = 0; i < lives; i++) {
         let croissant = this.add.image(50 + i * 40, 50, 'croissant').setScale(0.1);
         croissant.setScrollFactor(0);
         croissants.push(croissant);
     }
+
+    this.hazards = this.physics.add.staticGroup();
+    let hazard1 = this.add.tileSprite(1000, 520, 300, 64, 'hazard'); // eje X, eje Y, ancho, alto, imagen
+    this.physics.add.existing(hazard1, true);
+    hazard1.body.setSize(150, 120);
+    hazard1.body.setOffset(70, -70); //posición
+    this.hazards.add(hazard1);
+
+    let hazard2 = this.add.tileSprite(2000, 520, 300, 64, 'hazard'); 
+    this.physics.add.existing(hazard2, true);
+    hazard2.body.setSize(150, 120);
+    hazard2.body.setOffset(70, -70);
+    this.hazards.add(hazard2);
+
+    this.physics.add.collider(this.player, this.hazards, hitHazard, null, this);
+    
+    this.physics.add.overlap(this.enemies, this.hazards, enemyDetectHazard, null, this);
+
+    this.anims.create({
+        key: 'explosion',
+        frames: [
+            { key: 'explosion1' },
+            { key: 'explosion2' },
+            { key: 'explosion3' },
+            { key: 'explosion4' }
+        ],
+        frameRate: 7,
+        repeat: -1
+    });
+
+    this.hazards.children.iterate(function (hazard) {
+        let explosion = game.scene.scenes[0].add.sprite(hazard.x, hazard.y - 32, 'explosion1').setScale(0.4);
+        explosion.anims.play('explosion', true);
+        console.log('Explosion added at:', hazard.x, hazard.y);
+    });
+
+    this.flag = this.physics.add.sprite(2700, 430, 'flag').setScale(0.4); 
+    this.physics.add.collider(this.flag, this.platforms); 
+    this.physics.add.overlap(this.player, this.flag, reachFlag, null, this);
 }
 
 function update() {
@@ -149,7 +194,7 @@ function update() {
 
     const enemySpeed = 70;
     this.enemies.children.iterate(function (enemy) {
-        if (!enemy.body.velocity.x) {
+        if (enemy.body.velocity.x === 0) {
             enemy.setVelocityX(Phaser.Math.Between(0, 1) ? enemySpeed : -enemySpeed);
         }
 
@@ -176,7 +221,7 @@ function update() {
 function hitEnemy(player, enemy) {
     if (!invulnerable) {
         lives -= 1;
-        croissants[lives].destroy(); 
+        croissants[lives].destroy();
         console.log(`Vidas restantes: ${lives}`);
         if (lives <= 0) {
             this.physics.pause();
@@ -196,6 +241,33 @@ function hitEnemy(player, enemy) {
     }
 }
 
+function hitHazard(player, hazard) {
+    if (!invulnerable) {
+        lives -= 1;
+        croissants[lives].destroy();
+        console.log(`Vidas restantes: ${lives}`);
+        if (lives <= 0) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            player.anims.play('turn');
+            gameOver = true;
+        } else {
+            invulnerable = true;
+            this.time.addEvent({
+                delay: 2000,
+                callback: () => {
+                    invulnerable = false;
+                },
+                callbackScope: this
+            });
+        }
+    }
+}
+
+function enemyDetectHazard(enemy, hazard) {
+    enemy.setVelocityX(-enemy.body.velocity.x);
+}
+
 function adjustCameraZoom() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -205,6 +277,15 @@ function adjustCameraZoom() {
     } else {
         game.scene.scenes[0].cameras.main.setZoom(1);
     }
+}
+
+function reachFlag(player, flag) {
+    this.physics.pause();
+    player.setTint(0x00ff00);
+    player.anims.play('turn');
+    let style = { font: "40px Arial", fill: "#fff" };
+    let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado", style);
+    text.setOrigin(0.5);
 }
 
 window.addEventListener('resize', () => {
