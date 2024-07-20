@@ -1,7 +1,7 @@
 const config = {
     type: Phaser.AUTO,
-    width: window.innerWidth * 0.8, 
-    height: window.innerHeight * 0.8, 
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.8,
     parent: 'game',
     physics: {
         default: 'arcade',
@@ -19,6 +19,10 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+let lives = 3;
+let croissants = [];
+let invulnerable = false;
+
 function preload() {
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground1', 'assets/ground1.png');
@@ -29,6 +33,7 @@ function preload() {
     this.load.image('zombieWalk4', 'assets/Walk4.png');
     this.load.image('zombieWalk5', 'assets/Walk5.png');
     this.load.image('zombieWalk6', 'assets/Walk6.png');
+    this.load.image('croissant', 'assets/croissant.png'); 
 }
 
 function create() {
@@ -111,6 +116,13 @@ function create() {
     });
 
     adjustCameraZoom();
+
+    
+    for (let i = 0; i < lives; i++) {
+        let croissant = this.add.image(50 + i * 40, 50, 'croissant').setScale(0.1);
+        croissant.setScrollFactor(0);
+        croissants.push(croissant);
+    }
 }
 
 function update() {
@@ -118,11 +130,11 @@ function update() {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('left', true);
-            this.player.setFlipX(true); 
+            this.player.setFlipX(true);
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('right', true);
-            this.player.setFlipX(false); 
+            this.player.setFlipX(false);
         } else {
             this.player.setVelocityX(0);
             this.player.anims.play('turn');
@@ -133,39 +145,55 @@ function update() {
         }
     }
 
-    
     this.background.tilePositionX = this.cameras.main.scrollX * 0.5;
 
-    
-    const enemySpeed = 70; 
+    const enemySpeed = 70;
     this.enemies.children.iterate(function (enemy) {
         if (!enemy.body.velocity.x) {
-           
             enemy.setVelocityX(Phaser.Math.Between(0, 1) ? enemySpeed : -enemySpeed);
         }
 
-        
         enemy.setFlipX(enemy.body.velocity.x < 0);
 
-        
         if (enemy.body.blocked.left) {
             enemy.setVelocityX(enemySpeed);
         } else if (enemy.body.blocked.right) {
             enemy.setVelocityX(-enemySpeed);
         }
 
-        
         if (!enemy.anims.isPlaying) {
             enemy.anims.play('enemyWalk', true);
         }
     });
+
+    if (invulnerable) {
+        this.player.setAlpha(this.player.alpha === 1 ? 0.5 : 1);
+    } else {
+        this.player.setAlpha(1);
+    }
 }
 
 function hitEnemy(player, enemy) {
-    this.physics.pause();
-    player.setTint(0xff0000);
-    player.anims.play('turn');
-    gameOver = true;
+    if (!invulnerable) {
+        lives -= 1;
+        croissants[lives].destroy(); 
+        console.log(`Vidas restantes: ${lives}`);
+        if (lives <= 0) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            player.anims.play('turn');
+            gameOver = true;
+        } else {
+            invulnerable = true;
+            this.time.addEvent({
+                delay: 2000,
+                callback: () => {
+                    invulnerable = false;
+                },
+                callbackScope: this
+            });
+        }
+    }
 }
 
 function adjustCameraZoom() {
@@ -180,7 +208,7 @@ function adjustCameraZoom() {
 }
 
 window.addEventListener('resize', () => {
-    game.scale.resize(window.innerWidth * 0.8, window.innerHeight * 0.8); 
+    game.scale.resize(window.innerWidth * 0.8, window.innerHeight * 0.8);
     adjustCameraZoom();
 });
 
