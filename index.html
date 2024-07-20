@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +16,6 @@
             height: 100vh;
             background-color: #000;
         }
-
         #game-container {
             width: 100%;
             height: 100%;
@@ -25,7 +23,15 @@
             justify-content: center;
             align-items: center;
         }
-
+        #game-wrapper {
+            width: 80%;
+            height: 80%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
         #rotate-device {
             display: none;
             position: fixed;
@@ -40,17 +46,14 @@
             font-size: 24px;
             z-index: 100;
         }
-
         #mobile-controls {
             position: fixed;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 20px;
             display: flex;
             gap: 10px;
         }
-
-        .control-button {
+        #jump-button {
             width: 80px;
             height: 60px;
             background-color: rgba(255, 255, 255, 0.5);
@@ -61,27 +64,53 @@
             align-items: center;
             font-size: 18px;
             color: black;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
         }
-
+        #joystick-area {
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            position: relative;
+        }
+        #joystick {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
         @media (min-width: 768px) {
-            #mobile-controls {
+            #mobile-controls, #jump-button {
                 display: none;
             }
         }
     </style>
 </head>
-
 <body>
-    <div id="game-container"></div>
+    <div id="game-container">
+        <div id="game-wrapper">
+            <div id="game"></div>
+        </div>
+    </div>
     <div id="rotate-device">Gira el dispositivo o te comes el cilantro</div>
     <div id="mobile-controls">
-        <button id="left-button" class="control-button">Izquierda</button>
-        <button id="jump-button" class="control-button">Saltar</button>
-        <button id="right-button" class="control-button">Derecha</button>
+        <div id="joystick-area">
+            <div id="joystick"></div>
+        </div>
     </div>
+    <button id="jump-button">Saltar</button>
     <script>
         const rotateDeviceElement = document.getElementById('rotate-device');
         const mobileControlsElement = document.getElementById('mobile-controls');
+        const jumpButton = document.getElementById('jump-button');
+        const joystickArea = document.getElementById('joystick-area');
+        const joystick = document.getElementById('joystick');
 
         function checkOrientation() {
             if (window.innerWidth < window.innerHeight) {
@@ -107,15 +136,82 @@
         window.addEventListener('resize', checkOrientation);
         window.addEventListener('load', () => {
             checkOrientation();
-
             if (/Mobi|Android/i.test(navigator.userAgent)) {
                 mobileControlsElement.style.display = 'flex';
+                jumpButton.style.display = 'flex';
                 enableFullScreen();
             }
         });
 
-        document.body.addEventListener('click', enableFullScreen); 
+        document.body.addEventListener('click', enableFullScreen);
+
+        
+        let joystickActive = false;
+        let joystickOrigin = { x: 0, y: 0 };
+        let joystickPosition = { x: 0, y: 0 };
+
+        function handleJoystickStart(e) {
+            joystickActive = true;
+            const joystickRect = joystickArea.getBoundingClientRect();
+            joystickOrigin = {
+                x: joystickRect.left + joystickRect.width / 2,
+                y: joystickRect.top + joystickRect.height / 2
+            };
+            updateJoystickPosition(e);
+        }
+
+        function handleJoystickMove(e) {
+            if (joystickActive) {
+                updateJoystickPosition(e);
+            }
+        }
+
+        function handleJoystickEnd() {
+            joystickActive = false;
+            joystick.style.transform = 'translate(-50%, -50%)';
+            joystickPosition = { x: 0, y: 0 };
+           
+            if (window.game && window.game.scene.scenes[0].player) {
+                window.game.scene.scenes[0].player.setVelocityX(0);
+            }
+        }
+
+        function updateJoystickPosition(e) {
+            const touch = e.touches ? e.touches[0] : e;
+            let dx = touch.clientX - joystickOrigin.x;
+            let dy = touch.clientY - joystickOrigin.y;
+            const distance = Math.min(50, Math.sqrt(dx * dx + dy * dy));
+            const angle = Math.atan2(dy, dx);
+            dx = distance * Math.cos(angle);
+            dy = distance * Math.sin(angle);
+            joystick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+            joystickPosition = { x: dx / 50, y: dy / 50 };
+            
+            if (window.game && window.game.scene.scenes[0].player) {
+                const player = window.game.scene.scenes[0].player;
+                player.setVelocityX(160 * joystickPosition.x);
+                if (joystickPosition.x < 0) {
+                    player.anims.play('left', true);
+                    player.setFlipX(true);
+                } else if (joystickPosition.x > 0) {
+                    player.anims.play('right', true);
+                    player.setFlipX(false);
+                } else {
+                    player.anims.play('turn');
+                }
+            }
+        }
+
+        joystickArea.addEventListener('touchstart', handleJoystickStart);
+        joystickArea.addEventListener('touchmove', handleJoystickMove);
+        joystickArea.addEventListener('touchend', handleJoystickEnd);
+
+        
+        jumpButton.addEventListener('touchstart', () => {
+            if (window.game && window.game.scene.scenes[0].player && window.game.scene.scenes[0].player.body.touching.down) {
+                window.game.scene.scenes[0].player.setVelocityY(-400);
+            }
+        });
     </script>
 </body>
-
 </html>
