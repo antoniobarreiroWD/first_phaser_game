@@ -126,10 +126,9 @@ function create() {
 
     adjustCameraZoom();
 
-    
     let croissantX = window.innerWidth < 1200 ? -250 : 50;
     let croissantY = window.innerWidth < 1200 ? -100 : 50;
-    
+
     for (let i = 0; i < lives; i++) {
         let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.1);
         croissant.setScrollFactor(0);
@@ -137,20 +136,20 @@ function create() {
     }
 
     this.hazards = this.physics.add.staticGroup();
-    let hazard1 = this.add.tileSprite(1000, 520, 300, 64, 'hazard'); // eje X, eje Y, ancho, alto, imagen
+    let hazard1 = this.add.tileSprite(1000, 520, 300, 64, 'hazard'); //  eje X, eje Y, ancho, alto, imagen
     this.physics.add.existing(hazard1, true);
     hazard1.body.setSize(150, 120);
-    hazard1.body.setOffset(70, -70); //posición
+    hazard1.body.setOffset(70, -70); // posición
     this.hazards.add(hazard1);
 
-    let hazard2 = this.add.tileSprite(2000, 520, 300, 64, 'hazard'); 
+    let hazard2 = this.add.tileSprite(2000, 520, 300, 64, 'hazard');
     this.physics.add.existing(hazard2, true);
     hazard2.body.setSize(150, 120);
     hazard2.body.setOffset(70, -70);
     this.hazards.add(hazard2);
 
     this.physics.add.collider(this.player, this.hazards, hitHazard, null, this);
-    
+
     this.physics.add.overlap(this.enemies, this.hazards, enemyDetectHazard, null, this);
 
     this.anims.create({
@@ -182,11 +181,11 @@ function create() {
         repeat: -1
     });
 
-    this.flag = this.add.sprite(3000, 501, 'flag1').setScale(2); 
-    this.flag.play('flagWave'); 
+    this.flag = this.add.sprite(3000, 501, 'flag1').setScale(2);
+    this.flag.play('flagWave');
 
     this.physics.add.existing(this.flag, true);
-    this.physics.add.collider(this.flag, this.platforms); 
+    this.physics.add.collider(this.flag, this.platforms);
     this.physics.add.overlap(this.player, this.flag, reachFlag, null, this);
 }
 
@@ -307,6 +306,16 @@ function reachFlag(player, flag) {
     let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado", style);
     text.setOrigin(0.5);
 }
+
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        if (window.innerHeight > window.innerWidth) {
+            requestFullScreen();
+        }
+        game.scale.resize(window.innerWidth * 0.8, window.innerHeight * 0.8);
+        adjustCameraZoom();
+    }, 500);
+});
 
 window.addEventListener('resize', () => {
     game.scale.resize(window.innerWidth * 0.8, window.innerHeight * 0.8);
