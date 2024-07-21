@@ -191,7 +191,7 @@ function create() {
 }
 
 function update() {
-    if (window.innerWidth >= 768) {
+    if (window.innerWidth >= 990) {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('left', true);
@@ -292,7 +292,7 @@ function adjustCameraZoom() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    if (width < 768) {
+    if (width < 990) {
         game.scene.scenes[0].cameras.main.setZoom(0.5);
     } else {
         game.scene.scenes[0].cameras.main.setZoom(1);
