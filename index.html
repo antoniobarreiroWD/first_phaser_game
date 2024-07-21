@@ -85,7 +85,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        @media (min-width: 768px) {
+        @media (min-width: 990px) {
             #mobile-controls, #jump-button {
                 display: none;
             }
@@ -167,40 +167,46 @@
         }
 
         function handleJoystickEnd() {
-            joystickActive = false;
-            joystick.style.transform = 'translate(-50%, -50%)';
-            joystickPosition = { x: 0, y: 0 };
-           
-            if (window.game && window.game.scene.scenes[0].player) {
-                window.game.scene.scenes[0].player.setVelocityX(0);
-            }
-        }
+    joystickActive = false;
+    joystick.style.transform = 'translate(-50%, -50%)';
+    joystickPosition = { x: 0, y: 0 };
+
+    if (window.game && window.game.scene.scenes[0].player) {
+        const player = window.game.scene.scenes[0].player;
+        player.setVelocityX(0);
+        player.anims.play('turn');
+    }
+}
+
 
         function updateJoystickPosition(e) {
-            const touch = e.touches ? e.touches[0] : e;
-            let dx = touch.clientX - joystickOrigin.x;
-            let dy = touch.clientY - joystickOrigin.y;
-            const distance = Math.min(50, Math.sqrt(dx * dx + dy * dy));
-            const angle = Math.atan2(dy, dx);
-            dx = distance * Math.cos(angle);
-            dy = distance * Math.sin(angle);
-            joystick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-            joystickPosition = { x: dx / 50, y: dy / 50 };
-            
-            if (window.game && window.game.scene.scenes[0].player) {
-                const player = window.game.scene.scenes[0].player;
-                player.setVelocityX(160 * joystickPosition.x);
-                if (joystickPosition.x < 0) {
-                    player.anims.play('left', true);
-                    player.setFlipX(true);
-                } else if (joystickPosition.x > 0) {
-                    player.anims.play('right', true);
-                    player.setFlipX(false);
-                } else {
-                    player.anims.play('turn');
-                }
-            }
+    const touch = e.touches ? e.touches[0] : e;
+    let dx = touch.clientX - joystickOrigin.x;
+    let dy = touch.clientY - joystickOrigin.y;
+    const distance = Math.min(50, Math.sqrt(dx * dx + dy * dy));
+    const angle = Math.atan2(dy, dx);
+    dx = distance * Math.cos(angle);
+    dy = distance * Math.sin(angle);
+    joystick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    joystickPosition = { x: dx / 50, y: dy / 50 };
+
+    if (window.game && window.game.scene.scenes[0].player) {
+        const player = window.game.scene.scenes[0].player;
+        player.setVelocityX(160 * joystickPosition.x);
+
+        if (joystickPosition.x < 0) {
+            player.anims.play('left', true);
+            player.setFlipX(true);
+        } else if (joystickPosition.x > 0) {
+            player.anims.play('right', true);
+            player.setFlipX(false);
+        } else {
+            player.setVelocityX(0);
+            player.anims.play('turn');
         }
+    }
+}
+
 
         joystickArea.addEventListener('touchstart', handleJoystickStart);
         joystickArea.addEventListener('touchmove', handleJoystickMove);

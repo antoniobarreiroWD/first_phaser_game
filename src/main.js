@@ -35,7 +35,7 @@ function preload() {
     this.load.image('zombieWalk6', 'assets/Walk6.png');
     this.load.image('croissant', 'assets/croissant.png');
     this.load.image('hazard', 'assets/explosion2.png');
-    this.load.image('explosion1', 'assets/explosion3.jpg');
+    this.load.image('explosion1', 'assets/explosion3.png');
     this.load.image('explosion2', 'assets/explosion2.png');
     this.load.image('explosion3', 'assets/explosion3.png');
     this.load.image('explosion4', 'assets/explosion4.png');
@@ -126,9 +126,9 @@ function create() {
 
     adjustCameraZoom();
 
-    // Adjust croissants position based on screen size
-    let croissantX = 50;
-    let croissantY = window.innerWidth < 768 ? 20 : 50;
+    
+    let croissantX = window.innerWidth < 1200 ? -250 : 50;
+    let croissantY = window.innerWidth < 1200 ? -100 : 50;
     
     for (let i = 0; i < lives; i++) {
         let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.1);
@@ -191,7 +191,7 @@ function create() {
 }
 
 function update() {
-    if (window.innerWidth >= 768) {
+    if (window.innerWidth >= 990) {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('left', true);
@@ -292,7 +292,7 @@ function adjustCameraZoom() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    if (width < 768) {
+    if (width < 990) {
         game.scene.scenes[0].cameras.main.setZoom(0.5);
     } else {
         game.scene.scenes[0].cameras.main.setZoom(1);
