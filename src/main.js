@@ -126,8 +126,12 @@ function create() {
 
     adjustCameraZoom();
 
+    // Adjust croissants position based on screen size
+    let croissantX = 50;
+    let croissantY = window.innerWidth < 768 ? 20 : 50;
+    
     for (let i = 0; i < lives; i++) {
-        let croissant = this.add.image(50 + i * 40, 50, 'croissant').setScale(0.1);
+        let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.1);
         croissant.setScrollFactor(0);
         croissants.push(croissant);
     }
@@ -289,7 +293,7 @@ function adjustCameraZoom() {
     const height = window.innerHeight;
 
     if (width < 768) {
-        game.scene.scenes[0].cameras.main.setZoom(0.75);
+        game.scene.scenes[0].cameras.main.setZoom(0.5);
     } else {
         game.scene.scenes[0].cameras.main.setZoom(1);
     }
