@@ -39,7 +39,9 @@ function preload() {
     this.load.image('explosion2', 'assets/explosion2.png');
     this.load.image('explosion3', 'assets/explosion3.png');
     this.load.image('explosion4', 'assets/explosion4.png');
-    this.load.image('flag', 'assets/flag.png');
+    this.load.image('flag1', 'assets/flag2.png');
+    this.load.image('flag2', 'assets/flag3.png');
+    this.load.image('flag3', 'assets/flag4.png');
 }
 
 function create() {
@@ -165,7 +167,21 @@ function create() {
         console.log('Explosion added at:', hazard.x, hazard.y);
     });
 
-    this.flag = this.physics.add.sprite(2700, 430, 'flag').setScale(0.4); 
+    this.anims.create({
+        key: 'flagWave',
+        frames: [
+            { key: 'flag1' },
+            { key: 'flag2' },
+            { key: 'flag3' },
+        ],
+        frameRate: 5,
+        repeat: -1
+    });
+
+    this.flag = this.add.sprite(3000, 501, 'flag1').setScale(2); 
+    this.flag.play('flagWave'); 
+
+    this.physics.add.existing(this.flag, true);
     this.physics.add.collider(this.flag, this.platforms); 
     this.physics.add.overlap(this.player, this.flag, reachFlag, null, this);
 }
