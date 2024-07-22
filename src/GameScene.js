@@ -202,32 +202,37 @@ class GameScene extends Phaser.Scene {
     }
 
     update() {
-        if (window.innerWidth >= 990) {
-            if (this.cursors.left.isDown) {
-                this.player.setVelocityX(-160);
-                this.player.anims.play('left', true);
-                this.sombrero.anims.play('sombreroWalk', true);
-                this.player.setFlipX(true);
-                this.sombrero.setFlipX(true);
-                this.sombrero.setPosition(this.player.x - 10, this.player.y - this.player.height / 2);
-            } else if (this.cursors.right.isDown) {
-                this.player.setVelocityX(160);
-                this.player.anims.play('right', true);
-                this.sombrero.anims.play('sombreroWalk', true);
-                this.player.setFlipX(false);
-                this.sombrero.setFlipX(false);
-                this.sombrero.setPosition(this.player.x + 10, this.player.y - this.player.height / 2);
-            } else {
-                this.player.setVelocityX(0);
-                this.player.anims.play('turn');
-                this.sombrero.setTexture('sombrero1');
-                this.sombrero.setPosition(this.player.x, this.player.y - this.player.height / 2);
-            }
+        let isSmallScreen = window.innerWidth < 990;
+        let sombreroYOffset = isSmallScreen ? -60 : -this.player.height / 2;
 
-            if (this.cursors.up.isDown && this.player.body.touching.down) {
-                this.player.setVelocityY(-400);
-                this.jumpSound.play();
+        if (this.cursors.left.isDown || joystickPosition.x < 0) {
+            this.player.setVelocityX(-160);
+            this.player.anims.play('left', true);
+            this.sombrero.anims.play('sombreroWalk', true);
+            this.player.setFlipX(true);
+            this.sombrero.setFlipX(true);
+            if (isSmallScreen) {
+                this.sombrero.setPosition(this.player.x  - 10, this.player.y + sombreroYOffset);
+            } else {
+                this.sombrero.setPosition(this.player.x - 10, this.player.y + sombreroYOffset);
             }
+        } else if (this.cursors.right.isDown || joystickPosition.x > 0) {
+            this.player.setVelocityX(160);
+            this.player.anims.play('right', true);
+            this.sombrero.anims.play('sombreroWalk', true);
+            this.player.setFlipX(false);
+            this.sombrero.setFlipX(false);
+            this.sombrero.setPosition(this.player.x + 10, this.player.y + sombreroYOffset);
+        } else {
+            this.player.setVelocityX(0);
+            this.player.anims.play('turn');
+            this.sombrero.setTexture('sombrero1');
+            this.sombrero.setPosition(this.player.x, this.player.y + sombreroYOffset);
+        }
+
+        if (this.cursors.up.isDown && this.player.body.touching.down) {
+            this.player.setVelocityY(-400);
+            this.jumpSound.play();
         }
 
         this.background.tilePositionX = this.cameras.main.scrollX * 0.5;
