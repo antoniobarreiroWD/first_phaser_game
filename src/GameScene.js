@@ -1,4 +1,3 @@
-// GameScene.js
 let lives = 3;
 let croissants = [];
 let invulnerable = false;
@@ -9,7 +8,7 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // Carga recursos específicos del juego
+      
         this.load.image('ground1', 'assets/ground1.png');
         this.load.spritesheet('player', 'assets/dude4.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image('zombieWalk1', 'assets/Walk1.png');
