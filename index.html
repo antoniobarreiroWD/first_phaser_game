@@ -221,6 +221,7 @@
         jumpButton.addEventListener('touchstart', () => {
             if (window.game && window.game.scene.getScene('GameScene').player && window.game.scene.getScene('GameScene').player.body.touching.down) {
                 window.game.scene.getScene('GameScene').player.setVelocityY(-400);
+                window.game.scene.getScene('GameScene').jumpSound.play();
             }
         });
 
