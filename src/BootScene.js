@@ -1,4 +1,4 @@
-// BootScene.js
+
 class BootScene extends Phaser.Scene {
     constructor() {
         super({ key: 'BootScene' });

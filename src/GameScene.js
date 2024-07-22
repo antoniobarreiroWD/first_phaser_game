@@ -8,7 +8,6 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-      
         this.load.image('ground1', 'assets/ground1.png');
         this.load.spritesheet('player', 'assets/dude4.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image('zombieWalk1', 'assets/Walk1.png');
@@ -17,7 +16,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('zombieWalk4', 'assets/Walk4.png');
         this.load.image('zombieWalk5', 'assets/Walk5.png');
         this.load.image('zombieWalk6', 'assets/Walk6.png');
-        this.load.image('croissant', 'assets/croissant.png');
+        this.load.image('croissant', 'assets/chili2.png');
         this.load.image('hazard', 'assets/explosion2.png');
         this.load.image('explosion1', 'assets/explosion3.png');
         this.load.image('explosion2', 'assets/explosion2.png');
@@ -26,8 +25,10 @@ class GameScene extends Phaser.Scene {
         this.load.image('flag1', 'assets/flag2.png');
         this.load.image('flag2', 'assets/flag3.png');
         this.load.image('flag3', 'assets/flag4.png');
+        this.load.image('sombrero1', 'assets/sombrero.png');
+        this.load.image('sombrero2', 'assets/sombrero3.png');
+        this.load.image('sombrero3', 'assets/sombrero4.png');
 
-        
         this.load.audio('backgroundMusic', 'assets/audio/backgroundMusic.wav');
         this.load.audio('jumpSound', 'assets/audio/jump.wav');
         this.load.audio('hitSound', 'assets/audio/hit.wav');
@@ -49,6 +50,10 @@ class GameScene extends Phaser.Scene {
         this.player.body.setSize(60, 128, false);
         this.player.body.setOffset((this.player.width - 60) / 2, 0);
 
+        this.sombrero = this.add.sprite(0, 0, 'sombrero1').setScale(0.2);
+        this.sombrero.setOrigin(0.45, 0.4);
+        this.sombrero.setVisible(false);
+
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
@@ -65,6 +70,17 @@ class GameScene extends Phaser.Scene {
         this.anims.create({
             key: 'right',
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'sombreroWalk',
+            frames: [
+                { key: 'sombrero1' },
+                { key: 'sombrero2' },
+                { key: 'sombrero3' }
+            ],
             frameRate: 10,
             repeat: -1
         });
@@ -120,7 +136,7 @@ class GameScene extends Phaser.Scene {
         let croissantY = window.innerWidth < 1200 ? -100 : 50;
 
         for (let i = 0; i < lives; i++) {
-            let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.1);
+            let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.05);
             croissant.setScrollFactor(0);
             croissants.push(croissant);
         }
@@ -177,11 +193,9 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.flag, this.platforms);
         this.physics.add.overlap(this.player, this.flag, this.reachFlag, null, this);
 
-        
         this.backgroundMusic = this.sound.add('backgroundMusic', { volume: 0.5, loop: true });
         this.backgroundMusic.play();
 
-        
         this.jumpSound = this.sound.add('jumpSound');
         this.hitSound = this.sound.add('hitSound');
         this.explosionSound = this.sound.add('explosionSound');
@@ -192,14 +206,22 @@ class GameScene extends Phaser.Scene {
             if (this.cursors.left.isDown) {
                 this.player.setVelocityX(-160);
                 this.player.anims.play('left', true);
+                this.sombrero.anims.play('sombreroWalk', true);
                 this.player.setFlipX(true);
+                this.sombrero.setFlipX(true);
+                this.sombrero.setPosition(this.player.x - 10, this.player.y - this.player.height / 2);
             } else if (this.cursors.right.isDown) {
                 this.player.setVelocityX(160);
                 this.player.anims.play('right', true);
+                this.sombrero.anims.play('sombreroWalk', true);
                 this.player.setFlipX(false);
+                this.sombrero.setFlipX(false);
+                this.sombrero.setPosition(this.player.x + 10, this.player.y - this.player.height / 2);
             } else {
                 this.player.setVelocityX(0);
                 this.player.anims.play('turn');
+                this.sombrero.setTexture('sombrero1');
+                this.sombrero.setPosition(this.player.x, this.player.y - this.player.height / 2);
             }
 
             if (this.cursors.up.isDown && this.player.body.touching.down) {
@@ -234,6 +256,8 @@ class GameScene extends Phaser.Scene {
         } else {
             this.player.setAlpha(1);
         }
+
+        this.sombrero.setVisible(true);
     }
 
     hitEnemy(player, enemy) {
