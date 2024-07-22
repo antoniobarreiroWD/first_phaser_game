@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Las Aventuras de Mairim</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-    <script src="src/main.js" defer></script>
+    <script type="module" src="src/main.js" defer></script>
     <style>
         body {
             margin: 0;
@@ -179,8 +179,8 @@
             joystick.style.transform = 'translate(-50%, -50%)';
             joystickPosition = { x: 0, y: 0 };
 
-            if (window.game && window.game.scene.scenes[0].player) {
-                const player = window.game.scene.scenes[0].player;
+            if (window.game && window.game.scene.getScene('GameScene').player) {
+                const player = window.game.scene.getScene('GameScene').player;
                 player.setVelocityX(0);
                 player.anims.play('turn');
             }
@@ -197,8 +197,8 @@
             joystick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
             joystickPosition = { x: dx / 50, y: dy / 50 };
 
-            if (window.game && window.game.scene.scenes[0].player) {
-                const player = window.game.scene.scenes[0].player;
+            if (window.game && window.game.scene.getScene('GameScene').player) {
+                const player = window.game.scene.getScene('GameScene').player;
                 player.setVelocityX(160 * joystickPosition.x);
 
                 if (joystickPosition.x < 0) {
@@ -219,8 +219,8 @@
         joystickArea.addEventListener('touchend', handleJoystickEnd);
 
         jumpButton.addEventListener('touchstart', () => {
-            if (window.game && window.game.scene.scenes[0].player && window.game.scene.scenes[0].player.body.touching.down) {
-                window.game.scene.scenes[0].player.setVelocityY(-400);
+            if (window.game && window.game.scene.getScene('GameScene').player && window.game.scene.getScene('GameScene').player.body.touching.down) {
+                window.game.scene.getScene('GameScene').player.setVelocityY(-400);
             }
         });
 
@@ -230,7 +230,9 @@
                     requestFullScreen();
                 }
                 game.scale.resize(window.innerWidth * 0.8, window.innerHeight * 0.8);
-                adjustCameraZoom();
+                if (game.scene.getScene('GameScene')) {
+                    game.scene.getScene('GameScene').adjustCameraZoom();
+                }
             }, 500);
         });
 
