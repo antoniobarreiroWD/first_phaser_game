@@ -2,9 +2,9 @@ let lives = 3;
 let croissants = [];
 let invulnerable = false;
 
-class GameScene extends Phaser.Scene {
+class Level1Scene extends Phaser.Scene {
     constructor() {
-        super({ key: 'GameScene' });
+        super({ key: 'Level1Scene' });
     }
 
     preload() {
@@ -17,7 +17,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('zombieWalk5', 'assets/catrinacut1.png');
         this.load.image('zombieWalk6', 'assets/catrinacut7.png');
         this.load.image('croissant', 'assets/chili2.png');
-        this.load.image('hazard', 'assets/cactus2.png');
+        this.load.image('hazard', 'assets/explosion2.png');
         this.load.image('explosion1', 'assets/cactus2.png');
         this.load.image('explosion2', 'assets/cactus3.png');
         this.load.image('explosion3', 'assets/cactus4.png');
@@ -36,24 +36,48 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.createBackground();
+        this.createPlatforms();
+        this.createPlayer();
+        this.createSombrero();
+        this.createAnimations();
+        this.createColliders();
+        this.createCamera();
+        this.createEnemies();
+        this.createCroissants();
+        this.createHazards();
+        this.createFlag();
+        this.createSounds();
+    }
+
+    createBackground() {
         this.background = this.add.tileSprite(0, 0, 4800, 600, 'sky').setOrigin(0, 0);
+    }
+
+    createPlatforms() {
         this.platforms = this.physics.add.staticGroup();
         let ground = this.add.tileSprite(2400, 590, 4800, 64, 'ground1');
         this.physics.add.existing(ground, true);
         ground.body.setSize(4800, 64);
         ground.body.setOffset(0, 0);
         this.platforms.add(ground);
+    }
 
+    createPlayer() {
         this.player = this.physics.add.sprite(100, 450, 'player');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(60, 128, false);
         this.player.body.setOffset((this.player.width - 60) / 2, 0);
+    }
 
+    createSombrero() {
         this.sombrero = this.add.sprite(0, 0, 'sombrero1').setScale(0.2);
         this.sombrero.setOrigin(0.45, 0.4);
         this.sombrero.setVisible(false);
+    }
 
+    createAnimations() {
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
@@ -85,37 +109,6 @@ class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.physics.add.collider(this.player, this.platforms);
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.cameras.main.setBounds(0, 0, 4800, 600);
-        this.cameras.main.startFollow(this.player);
-
-        this.physics.world.setBounds(0, 0, 4800, 600);
-
-        this.enemies = this.physics.add.group({
-            immovable: false,
-            allowGravity: true
-        });
-
-        let enemyPositions = [
-            { x: 600, y: 450 }, //posiciones
-            { x: 1500, y: 450 },
-        ];
-
-        enemyPositions.forEach((pos) => {
-            let enemy = this.enemies.create(pos.x, pos.y, 'zombieWalk1').setScale(0.4); //tamaño
-            enemy.setBounce(0.2);
-            enemy.setCollideWorldBounds(true);
-            let velocity = Phaser.Math.Between(0, 1) === 0 ? 40 : -40;
-            enemy.setVelocityX(velocity);
-            enemy.body.setSize(enemy.width * 0.3, enemy.height * 0.43); // colisiones
-        });
-
-        this.physics.add.collider(this.enemies, this.platforms);
-        this.physics.add.collider(this.player, this.enemies, this.hitEnemy, null, this);
-
         this.anims.create({
             key: 'enemyWalk',
             frames: [
@@ -125,37 +118,6 @@ class GameScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         });
-
-        this.enemies.children.iterate(function (enemy) {
-            enemy.anims.play('enemyWalk', true);
-        });
-
-        this.adjustCameraZoom();
-
-        let croissantX = window.innerWidth < 1200 ? -250 : 50;
-        let croissantY = window.innerWidth < 1200 ? -100 : 50;
-
-        for (let i = 0; i < lives; i++) {
-            let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.05);
-            croissant.setScrollFactor(0);
-            croissants.push(croissant);
-        }
-
-        this.hazards = this.physics.add.staticGroup();
-        let hazard1 = this.add.tileSprite(1000, 540, 300, 64, 'hazard');
-        this.physics.add.existing(hazard1, true);
-        hazard1.body.setSize(90, 110);
-        hazard1.body.setOffset(100, -60);
-        this.hazards.add(hazard1);
-
-        let hazard2 = this.add.tileSprite(2000, 540, 300, 64, 'hazard');
-        this.physics.add.existing(hazard2, true);
-        hazard2.body.setSize(90, 110);
-        hazard2.body.setOffset(100, -60);
-        this.hazards.add(hazard2);
-
-        this.physics.add.collider(this.player, this.hazards, this.hitHazard, null, this);
-        this.physics.add.overlap(this.enemies, this.hazards, this.enemyDetectHazard, null, this);
 
         this.anims.create({
             key: 'explosion',
@@ -169,12 +131,6 @@ class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.hazards.children.iterate(function (hazard) {
-            let explosion = this.add.sprite(hazard.x, hazard.y - 32, 'explosion1').setScale(0.4);
-            explosion.anims.play('explosion', true);
-            console.log('Explosion added at:', hazard.x, hazard.y);
-        }, this);
-
         this.anims.create({
             key: 'flagWave',
             frames: [
@@ -185,14 +141,88 @@ class GameScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         });
+    }
 
+    createColliders() {
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.enemies, this.platforms);
+        this.physics.add.collider(this.player, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.collider(this.player, this.hazards, this.hitHazard, null, this);
+        this.physics.add.overlap(this.enemies, this.hazards, this.enemyDetectHazard, null, this);
+        this.physics.add.overlap(this.player, this.flag, this.reachFlag, null, this);
+    }
+
+    createCamera() {
+        this.cameras.main.setBounds(0, 0, 4800, 600);
+        this.cameras.main.startFollow(this.player);
+        this.physics.world.setBounds(0, 0, 4800, 600);
+        this.adjustCameraZoom();
+    }
+
+    createEnemies() {
+        this.enemies = this.physics.add.group({
+            immovable: false,
+            allowGravity: true
+        });
+
+        let enemyPositions = [
+            { x: 600, y: 450 },
+            { x: 1500, y: 450 },
+        ];
+
+        enemyPositions.forEach((pos) => {
+            let enemy = this.enemies.create(pos.x, pos.y, 'zombieWalk1').setScale(0.4);
+            enemy.setBounce(0.2);
+            enemy.setCollideWorldBounds(true);
+            let velocity = Phaser.Math.Between(0, 1) === 0 ? 40 : -40;
+            enemy.setVelocityX(velocity);
+            enemy.body.setSize(enemy.width * 0.3, enemy.height * 0.43);
+        });
+
+        this.enemies.children.iterate(function (enemy) {
+            enemy.anims.play('enemyWalk', true);
+        });
+    }
+
+    createCroissants() {
+        let croissantX = window.innerWidth < 1200 ? -250 : 50;
+        let croissantY = window.innerWidth < 1200 ? -100 : 50;
+
+        for (let i = 0; i < lives; i++) {
+            let croissant = this.add.image(croissantX + i * 40, croissantY, 'croissant').setScale(0.05);
+            croissant.setScrollFactor(0);
+            croissants.push(croissant);
+        }
+    }
+
+    createHazards() {
+        this.hazards = this.physics.add.staticGroup();
+        let hazard1 = this.add.tileSprite(1000, 540, 300, 64, 'hazard');
+        this.physics.add.existing(hazard1, true);
+        hazard1.body.setSize(90, 110);
+        hazard1.body.setOffset(100, -60);
+        this.hazards.add(hazard1);
+
+        let hazard2 = this.add.tileSprite(2000, 540, 300, 64, 'hazard');
+        this.physics.add.existing(hazard2, true);
+        hazard2.body.setSize(90, 110);
+        hazard2.body.setOffset(100, -60);
+        this.hazards.add(hazard2);
+
+        this.hazards.children.iterate(function (hazard) {
+            let explosion = this.add.sprite(hazard.x, hazard.y - 32, 'explosion1').setScale(0.4);
+            explosion.anims.play('explosion', true);
+            console.log('Explosion added at:', hazard.x, hazard.y);
+        }, this);
+    }
+
+    createFlag() {
         this.flag = this.add.sprite(3000, 501, 'flag1').setScale(2);
         this.flag.play('flagWave');
-
         this.physics.add.existing(this.flag, true);
-        this.physics.add.collider(this.flag, this.platforms);
-        this.physics.add.overlap(this.player, this.flag, this.reachFlag, null, this);
+    }
 
+    createSounds() {
         this.backgroundMusic = this.sound.add('backgroundMusic', { volume: 0.5, loop: true });
         this.backgroundMusic.play();
 
@@ -212,7 +242,7 @@ class GameScene extends Phaser.Scene {
             this.player.setFlipX(true);
             this.sombrero.setFlipX(true);
             if (isSmallScreen) {
-                this.sombrero.setPosition(this.player.x  - 10, this.player.y + sombreroYOffset);
+                this.sombrero.setPosition(this.player.x - 10, this.player.y + sombreroYOffset);
             } else {
                 this.sombrero.setPosition(this.player.x - 10, this.player.y + sombreroYOffset);
             }
@@ -332,10 +362,19 @@ class GameScene extends Phaser.Scene {
         this.physics.pause();
         player.setTint(0x00ff00);
         player.anims.play('turn');
+        
         let style = { font: "40px Arial", fill: "#fff" };
         let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado", style);
         text.setOrigin(0.5);
+
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => {
+                this.scene.start('Level1Scene');
+            },
+            callbackScope: this
+        });
     }
 }
 
-export default GameScene;
+export default Level1Scene;
