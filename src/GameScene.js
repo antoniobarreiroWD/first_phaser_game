@@ -10,18 +10,18 @@ class GameScene extends Phaser.Scene {
     preload() {
         this.load.image('ground1', 'assets/ground1.png');
         this.load.spritesheet('player', 'assets/dude4.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.image('zombieWalk1', 'assets/Walk1.png');
-        this.load.image('zombieWalk2', 'assets/Walk2.png');
-        this.load.image('zombieWalk3', 'assets/Walk3.png');
-        this.load.image('zombieWalk4', 'assets/Walk4.png');
-        this.load.image('zombieWalk5', 'assets/Walk5.png');
-        this.load.image('zombieWalk6', 'assets/Walk6.png');
+        this.load.image('zombieWalk1', 'assets/catrinacut1.png');
+        this.load.image('zombieWalk2', 'assets/catrinacut7.png');
+        this.load.image('zombieWalk3', 'assets/catrinacut1.png');
+        this.load.image('zombieWalk4', 'assets/catrinacut7.png');
+        this.load.image('zombieWalk5', 'assets/catrinacut1.png');
+        this.load.image('zombieWalk6', 'assets/catrinacut7.png');
         this.load.image('croissant', 'assets/chili2.png');
         this.load.image('hazard', 'assets/explosion2.png');
-        this.load.image('explosion1', 'assets/explosion3.png');
-        this.load.image('explosion2', 'assets/explosion2.png');
-        this.load.image('explosion3', 'assets/explosion3.png');
-        this.load.image('explosion4', 'assets/explosion4.png');
+        this.load.image('explosion1', 'assets/cactus2.png');
+        this.load.image('explosion2', 'assets/cactus3.png');
+        this.load.image('explosion3', 'assets/cactus4.png');
+        this.load.image('explosion4', 'assets/cactus5.png');
         this.load.image('flag1', 'assets/flag2.png');
         this.load.image('flag2', 'assets/flag3.png');
         this.load.image('flag3', 'assets/flag4.png');
@@ -100,17 +100,17 @@ class GameScene extends Phaser.Scene {
         });
 
         let enemyPositions = [
-            { x: 600, y: 450 },
+            { x: 600, y: 450 }, //posiciones
             { x: 1500, y: 450 },
         ];
 
         enemyPositions.forEach((pos) => {
-            let enemy = this.enemies.create(pos.x, pos.y, 'zombieWalk1').setScale(0.4);
+            let enemy = this.enemies.create(pos.x, pos.y, 'zombieWalk1').setScale(0.4); //tamaño
             enemy.setBounce(0.2);
             enemy.setCollideWorldBounds(true);
             let velocity = Phaser.Math.Between(0, 1) === 0 ? 40 : -40;
             enemy.setVelocityX(velocity);
-            enemy.body.setSize(enemy.width * 0.7, enemy.height * 0.9);
+            enemy.body.setSize(enemy.width * 0.3, enemy.height * 0.43); // colisiones
         });
 
         this.physics.add.collider(this.enemies, this.platforms);
@@ -142,16 +142,16 @@ class GameScene extends Phaser.Scene {
         }
 
         this.hazards = this.physics.add.staticGroup();
-        let hazard1 = this.add.tileSprite(1000, 520, 300, 64, 'hazard');
+        let hazard1 = this.add.tileSprite(1000, 540, 300, 64, 'hazard');
         this.physics.add.existing(hazard1, true);
-        hazard1.body.setSize(150, 120);
-        hazard1.body.setOffset(70, -70);
+        hazard1.body.setSize(90, 110);
+        hazard1.body.setOffset(100, -60);
         this.hazards.add(hazard1);
 
-        let hazard2 = this.add.tileSprite(2000, 520, 300, 64, 'hazard');
+        let hazard2 = this.add.tileSprite(2000, 540, 300, 64, 'hazard');
         this.physics.add.existing(hazard2, true);
-        hazard2.body.setSize(150, 120);
-        hazard2.body.setOffset(70, -70);
+        hazard2.body.setSize(90, 110);
+        hazard2.body.setOffset(100, -60);
         this.hazards.add(hazard2);
 
         this.physics.add.collider(this.player, this.hazards, this.hitHazard, null, this);
