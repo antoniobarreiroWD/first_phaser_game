@@ -7,7 +7,7 @@ class TitleScene extends Phaser.Scene {
         let titleStyle = { fontSize: '48px', fill: '#fff' };
         let buttonStyle = { fontSize: '32px', fill: '#fff' };
 
-        if (window.innerWidth < 800) {
+        if (window.innerWidth < 990) {
             titleStyle.fontSize = '32px';
             buttonStyle.fontSize = '24px';
         }
