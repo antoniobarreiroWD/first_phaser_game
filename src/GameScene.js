@@ -36,11 +36,11 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.background = this.add.tileSprite(0, 0, 4800, 600, 'sky').setOrigin(0, 0);
+        this.background = this.add.tileSprite(0, 0, 7000, 600, 'sky').setOrigin(0, 0);
         this.platforms = this.physics.add.staticGroup();
-        let ground = this.add.tileSprite(2400, 590, 4800, 64, 'ground1');
+        let ground = this.add.tileSprite(4000, 590, 9000, 64, 'ground1');
         this.physics.add.existing(ground, true);
-        ground.body.setSize(4800, 64);
+        ground.body.setSize(9000, 64);
         ground.body.setOffset(0, 0);
         this.platforms.add(ground);
 
@@ -89,10 +89,10 @@ class GameScene extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.cameras.main.setBounds(0, 0, 4800, 600);
+        this.cameras.main.setBounds(0, 0, 6500, 600);
         this.cameras.main.startFollow(this.player);
 
-        this.physics.world.setBounds(0, 0, 4800, 600);
+        this.physics.world.setBounds(0, 0, 6500, 600);
 
         this.enemies = this.physics.add.group({
             immovable: false,
@@ -102,6 +102,10 @@ class GameScene extends Phaser.Scene {
         let enemyPositions = [
             { x: 600, y: 450 }, //posiciones
             { x: 1500, y: 450 },
+            { x: 2500, y: 450 },
+            { x: 3500, y: 450 },
+            { x: 4500, y: 450 }
+
         ];
 
         enemyPositions.forEach((pos) => {
@@ -154,6 +158,22 @@ class GameScene extends Phaser.Scene {
         hazard2.body.setOffset(100, -60);
         this.hazards.add(hazard2);
 
+        let hazard3 = this.add.tileSprite(3000, 540, 300, 64, 'hazard');
+        this.physics.add.existing(hazard3, true);
+        hazard3.body.setSize(90, 110);
+        hazard3.body.setOffset(100, -60);
+        this.hazards.add(hazard3);
+
+        let hazard4 = this.add.tileSprite(4000, 540, 300, 64, 'hazard');
+        this.physics.add.existing(hazard4, true);
+        hazard4.body.setSize(90, 110);
+        hazard4.body.setOffset(100, -60);
+        this.hazards.add(hazard4);
+
+
+
+        
+
         this.physics.add.collider(this.player, this.hazards, this.hitHazard, null, this);
         this.physics.add.overlap(this.enemies, this.hazards, this.enemyDetectHazard, null, this);
 
@@ -186,7 +206,7 @@ class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.flag = this.add.sprite(3000, 501, 'flag1').setScale(2);
+        this.flag = this.add.sprite(6400, 501, 'flag1').setScale(2);
         this.flag.play('flagWave');
 
         this.physics.add.existing(this.flag, true);

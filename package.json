@@ -6,7 +6,9 @@
   "version": "1.0.0",
   "main": "game.js",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "start": "http-server ./",
