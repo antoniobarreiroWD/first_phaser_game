@@ -1,4 +1,4 @@
-import BootScene from './BootScene.js';
+
 import GameScene from './GameScene.js';
 import TitleScene from './TitleScene.js';
 import GameOverScene from './GameOverScene.js';
@@ -12,7 +12,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
     },
     scene: [ TitleScene, GameScene, GameOverScene] 
