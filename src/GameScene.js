@@ -8,6 +8,7 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('sky', 'assets/sky.png');
         this.load.image('ground1', 'assets/ground1.png');
         this.load.spritesheet('player', 'assets/dude4.png', { frameWidth: 128, frameHeight: 128 });
         this.load.image('zombieWalk1', 'assets/catrinacut1.png');
@@ -36,6 +37,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+       
         this.background = this.add.tileSprite(0, 0, 7000, 600, 'sky').setOrigin(0, 0);
         this.platforms = this.physics.add.staticGroup();
         let ground = this.add.tileSprite(4000, 590, 9000, 64, 'ground1');
@@ -352,10 +354,16 @@ class GameScene extends Phaser.Scene {
         this.physics.pause();
         player.setTint(0x00ff00);
         player.anims.play('turn');
+        
         let style = { font: "40px Arial", fill: "#fff" };
-        let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado", style);
+        let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado\n¡Gracias por jugar!", style);
         text.setOrigin(0.5);
+    
+        this.time.delayedCall(3000, () => {
+            this.scene.start('GameOverScene');
+        }, [], this);
     }
+    
 }
 
 export default GameScene;

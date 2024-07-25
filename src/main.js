@@ -1,5 +1,7 @@
 import BootScene from './BootScene.js';
 import GameScene from './GameScene.js';
+import TitleScene from './TitleScene.js';
+import GameOverScene from './GameOverScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -13,11 +15,10 @@ const config = {
             debug: true
         }
     },
-    scene: [BootScene, GameScene]
+    scene: [ TitleScene, GameScene, GameOverScene] 
 };
 
 const game = new Phaser.Game(config);
-
 
 function resumeAudioContext() {
     if (game.sound.context.state === 'suspended') {
