@@ -4,8 +4,20 @@ class GameOverScene extends Phaser.Scene {
     }
 
     create() {
-        let titleStyle = { fontSize: '48px', fill: '#fff' };
-        let buttonStyle = { fontSize: '32px', fill: '#fff' };
+        let titleStyle = { 
+            fontSize: '48px', 
+            fill: '#fff',
+            fontFamily: 'Ranchers',
+            stroke: '#000',
+            strokeThickness: 6,
+            shadow: { offsetX: 3, offsetY: 3, color: '#333', blur: 5, stroke: true, fill: true }
+        };
+        let buttonStyle = { 
+            fontSize: '32px', 
+            fill: '#fff',
+            fontFamily: 'Ranchers',
+            
+         };
 
         if (window.innerWidth < 990) {
             titleStyle.fontSize = '32px';

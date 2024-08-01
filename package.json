@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "phaser": "^3.80.1"
+    "phaser": "^3.80.1",
+    "phaser3-rex-plugins": "^1.80.6",
+    "webfontloader": "^1.6.28"
   },
   "name": "first_phaser_game",
   "version": "1.0.0",
