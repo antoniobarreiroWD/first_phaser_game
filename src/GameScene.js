@@ -298,7 +298,7 @@ class GameScene extends Phaser.Scene {
                 player.setTint(0xff0000);
                 player.anims.play('turn');
                 
-               let gameOver = True; this.time.delayedCall(3000, () => {
+               let gameOver = true; this.time.delayedCall(3000, () => {
                     this.scene.start('GameOverScene');
                 }, [], this);
             } else {
