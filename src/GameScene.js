@@ -253,7 +253,7 @@ class GameScene extends Phaser.Scene {
         }
 
         if (this.cursors.up.isDown && this.player.body.touching.down) {
-            this.player.setVelocityY(-400);
+            this.player.setVelocityY(-500);
             this.jumpSound.play();
         }
 

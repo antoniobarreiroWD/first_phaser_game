@@ -3,10 +3,7 @@ class TitleScene extends Phaser.Scene {
         super({ key: 'TitleScene' });
     }
 
-    
-
     create() {
-       
         document.fonts.ready.then(() => {
             this.createTitleScene();
         });
@@ -42,16 +39,55 @@ class TitleScene extends Phaser.Scene {
             buttonStyle.fontSize = '16px';
         }
 
-        this.titleText = this.add.text(width / 2, height / 2 - 100, 'Las aventuras de Mairim', titleStyle).setOrigin(0.5);
-
-        this.playButton = this.add.text(width / 2, height / 2 + 100, 'Play', buttonStyle).setOrigin(0.5);
-
+        this.titleText = this.add.text(width / 2, height / 2 - 100, '', titleStyle).setOrigin(0.5);
+        this.playButton = this.add.text(width / 2, height / 2 + 100, '', buttonStyle).setOrigin(0.5);
         this.playButton.setInteractive();
         this.playButton.on('pointerdown', () => {
             this.scene.start('GameScene');
         });
+        this.playButton.setVisible(false);
 
         this.scale.on('resize', this.resize, this);
+
+        this.typeTitle('Las aventuras de Mairim', 100, () => {
+            this.typePlayButton('Play', 100);
+        }); 
+    }
+
+    typeTitle(text, delay, onComplete) {
+        let i = 0;
+        let timer = this.time.addEvent({
+            delay: delay,
+            callback: () => {
+                this.titleText.text += text[i];
+                i++;
+                if (i === text.length) {
+                    timer.remove();
+                    if (onComplete) {
+                        onComplete();
+                    }
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    typePlayButton(text, delay) {
+        let i = 0;
+        let timer = this.time.addEvent({
+            delay: delay,
+            callback: () => {
+                this.playButton.text += text[i];
+                i++;
+                if (i === text.length) {
+                    timer.remove();
+                    this.playButton.setVisible(true);
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
     }
 
     resize(gameSize) {
@@ -64,3 +100,4 @@ class TitleScene extends Phaser.Scene {
 }
 
 export default TitleScene;
+

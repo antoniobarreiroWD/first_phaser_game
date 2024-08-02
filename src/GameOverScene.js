@@ -16,7 +16,6 @@ class GameOverScene extends Phaser.Scene {
             fontSize: '32px', 
             fill: '#fff',
             fontFamily: 'Ranchers',
-            
          };
 
         if (window.innerWidth < 990) {
@@ -29,7 +28,7 @@ class GameOverScene extends Phaser.Scene {
 
         restartButton.setInteractive();
         restartButton.on('pointerdown', () => {
-            this.scene.start('TitleScene');
+            window.location.reload();
         });
     }
 }
