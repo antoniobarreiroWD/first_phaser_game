@@ -367,15 +367,17 @@ class GameScene extends Phaser.Scene {
         this.physics.pause();
         player.setTint(0x00ff00);
         player.anims.play('turn');
-        
-        let style = { font: "40px Arial", fill: "#fff" };
-        let text = this.add.text(this.cameras.main.midPoint.x, this.cameras.main.midPoint.y, "Nivel Completado\n¡Gracias por jugar!", style);
-        text.setOrigin(0.5);
+    
+        let style = { font: "40px Ranchers", fill: "#050100",  fontFamily: 'Ranchers' };
+       
+        let text = this.add.text(this.cameras.main.midPoint.x, 50, "Nivel Completado\n¡Gracias por jugar!", style);
+        text.setOrigin(0.5, 0); 
     
         this.time.delayedCall(3000, () => {
             this.scene.start('GameOverScene');
         }, [], this);
     }
+    
     
 }
 
